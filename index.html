@@ -286,6 +286,10 @@
                    class="w-full p-3 border border-gray-300 rounded-lg">
         </div>
 
+        <!-- ここから追加（スコアを入れる隠し項目） -->
+        <input type="hidden" name="score" id="scoreField">
+        <!-- ここまで追加 -->
+
         <button type="submit" 
                 class="w-full bg-accent hover:bg-red-700 text-white font-bold py-3 rounded-lg">
             メールマガジンに登録する
@@ -472,19 +476,25 @@
             /**
              * スコアを計算して結果ページに表示する
              */
-            function calculateScore() {
-                let score = 0;
-                for (let i = 0; i < quizData.length; i++) {
-                    if (selectedAnswers[i] === quizData[i].correct) {
-                        // 修正点1: 1問20点
-                        score += 20;
-                    }
-                }
-                // 修正点1: 100点満点で表示
-                document.getElementById('score-display').textContent = `${score} / 100`;
-                
-                // 修正点3: シェアURL更新の処理を削除
-            }
+function calculateScore() {
+    let score = 0;
+    for (let i = 0; i < quizData.length; i++) {
+        if (selectedAnswers[i] === quizData[i].correct) {
+            // 1問20点
+            score += 20;
+        }
+    }
+
+    // 画面表示用（0〜100点）
+    document.getElementById('score-display').textContent = `${score} / 100`;
+
+    // ★ここが超重要：フォーム用のhiddenにスコアを入れる
+    const scoreField = document.getElementById('scoreField');
+    if (scoreField) {
+        scoreField.value = score;   // 例：80 なら「80」が送られる
+    }
+}
+
 
             // --- イベントリスナーの設定 ---
 
