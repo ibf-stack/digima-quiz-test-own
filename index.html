@@ -548,5 +548,37 @@ function calculateScore() {
             showSection(0); // 最初の質問を表示
         });
     </script>
+
+    <!-- ★★★ フォーム送信用スクリプトをここに追加 ★★★ -->
+    <script>
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbwXVbw_6hEb4YwGF9mEnEYkTTDYXLwVysqpVLlJD17t-bIOYgmnUMVGmxoZK4FvI10-Nw/exec";
+
+    document.getElementById("leadForm").addEventListener("submit", function(e) {
+        e.preventDefault();   // ページ遷移を防止
+
+        const form = this;
+        const formMessage = document.getElementById("formMessage");
+
+        formMessage.textContent = "送信中です…";
+
+        const formData = new FormData(form);
+
+        fetch(GAS_URL, {
+            method: "POST",
+            body: formData,
+            mode: "no-cors"   // ★ 成功後もエラー扱いになるのを防ぐ
+        })
+        .then(() => {
+            formMessage.textContent = "ご登録ありがとうございました！";
+            form.reset();
+        })
+        .catch(error => {
+            console.error("Error!", error);
+            formMessage.textContent = "エラーが発生しました。時間をおいて再度お試しください。";
+        });
+    });
+    </script>
+    <!-- ★★★ ここまで追加 ★★★ -->
+
 </body>
 </html>
