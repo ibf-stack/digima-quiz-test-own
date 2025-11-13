@@ -273,30 +273,37 @@
 <!-- 自作フォーム：ここに差し替え -->
 <div class="bg-white p-6 rounded-lg shadow-md max-w-xl mx-auto mt-8 border border-gray-200">
 
-    <form id="leadForm">
-        <div class="mb-4">
-            <label class="block text-gray-700 font-semibold mb-1">お名前</label>
-            <input type="text" name="name" required
-                   class="w-full p-3 border border-gray-300 rounded-lg">
-        </div>
+<form id="leadForm"
+      action="https://script.google.com/macros/s/AKfycbwXVbw_6hEb4YwGF9mEnEYkTTDYXLwVysqpVLlJD17t-bIOYgmnUMVGmxoZK4FvI10-Nw/exec"
+      method="POST"
+      target="hidden_iframe"
+      onsubmit="document.getElementById('formMessage').textContent='送信中です…';">
 
-        <div class="mb-4">
-            <label class="block text-gray-700 font-semibold mb-1">メールアドレス</label>
-            <input type="email" name="email" required
-                   class="w-full p-3 border border-gray-300 rounded-lg">
-        </div>
+    <div class="mb-4">
+        <label class="block text-gray-700 font-semibold mb-1">お名前</label>
+        <input type="text" name="name" required
+               class="w-full p-3 border border-gray-300 rounded-lg">
+    </div>
 
-        <!-- ここから追加（スコアを入れる隠し項目） -->
-        <input type="hidden" name="score" id="scoreField">
-        <!-- ここまで追加 -->
+    <div class="mb-4">
+        <label class="block text-gray-700 font-semibold mb-1">メールアドレス</label>
+        <input type="email" name="email" required
+               class="w-full p-3 border border-gray-300 rounded-lg">
+    </div>
 
-        <button type="submit" 
-                class="w-full bg-accent hover:bg-red-700 text-white font-bold py-3 rounded-lg">
-            メールマガジンに登録する
-        </button>
+    <!-- スコア用 hidden。必ずここに置いてください -->
+    <input type="hidden" name="score" id="scoreField">
 
-        <p id="formMessage" class="text-center text-sm mt-4 text-gray-600"></p>
-    </form>
+    <button type="submit" 
+            class="w-full bg-accent hover:bg-red-700 text-white font-bold py-3 rounded-lg">
+        メールマガジンに登録する
+    </button>
+
+    <p id="formMessage" class="text-center text-sm mt-4 text-gray-600"></p>
+</form>
+<!-- フォーム送信用の見えないiframe -->
+<iframe name="hidden_iframe" style="display:none;"></iframe>
+
 
 </div>
 
@@ -480,20 +487,20 @@ function calculateScore() {
     let score = 0;
     for (let i = 0; i < quizData.length; i++) {
         if (selectedAnswers[i] === quizData[i].correct) {
-            // 1問20点
-            score += 20;
+            score += 20; // 1問20点
         }
     }
 
     // 画面表示用（0〜100点）
     document.getElementById('score-display').textContent = `${score} / 100`;
 
-    // ★ここが超重要：フォーム用のhiddenにスコアを入れる
+    // フォーム送信用：hiddenにスコアを入れる
     const scoreField = document.getElementById('scoreField');
     if (scoreField) {
-        scoreField.value = score;   // 例：80 なら「80」が送られる
+        scoreField.value = score;
     }
 }
+
 
 
             // --- イベントリスナーの設定 ---
@@ -541,29 +548,5 @@ function calculateScore() {
             showSection(0); // 最初の質問を表示
         });
     </script>
-<script>
-// ★★★ ここにあなたのGAS WebアプリURLを貼る（すでに貼ってあります） ★★★
-const GAS_URL = "https://script.google.com/macros/s/AKfycbwXVbw_6hEb4YwGF9mEnEYkTTDYXLwVysqpVLlJD17t-bIOYgmnUMVGmxoZK4FvI10-Nw/exec";
-
-document.getElementById("leadForm").addEventListener("submit", function(e) {
-    e.preventDefault();
-
-    const formMessage = document.getElementById("formMessage");
-    formMessage.textContent = "送信中です…";
-
-    const formData = new FormData(this);
-
-    fetch(GAS_URL, { method: "POST", body: formData })
-        .then(response => response.text())
-        .then(result => {
-            formMessage.textContent = "ご登録ありがとうございました！";
-            document.getElementById("leadForm").reset();
-        })
-        .catch(error => {
-            console.error("Error!", error);
-            formMessage.textContent = "エラーが発生しました。時間をおいて再度お試しください。";
-        });
-});
-</script>
 </body>
 </html>
